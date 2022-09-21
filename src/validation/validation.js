@@ -37,4 +37,10 @@ const passregex = function(value){
     return true
 }
 
-module.exports = {isvalid,regname,phoneregex,emailregex,passregex,enumvalid}
+const isbnregex = function(value){
+    let regex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
+    if(!regex.test(value)) return false
+    return true
+}
+
+module.exports = {isvalid,regname,phoneregex,emailregex,passregex,enumvalid,isbnregex}
