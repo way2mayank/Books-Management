@@ -1,4 +1,4 @@
-const isvalid = function (value) {
+const isValid = function (value) {
     if (typeof value === "undefined" || value === null) return false;
     if (typeof value === "string" && value.trim().length === 0) return false;
     return true;
@@ -43,4 +43,4 @@ const isbnregex = function(value){
     return true
 }
 
-module.exports = {isvalid,regname,phoneregex,emailregex,passregex,enumvalid,isbnregex}
+module.exports = {isValid,regname,phoneregex,emailregex,passregex,enumvalid,isbnregex}

@@ -1,6 +1,6 @@
 const usermodel = require("../model/userModel")
 const jwt = require("jsonwebtoken")
-const { isvalid, regname, phoneregex, emailregex, passregex, enumvalid } = require("../validation/validation")
+const { isValid, regname, phoneregex, emailregex, passregex, enumvalid } = require("../validation/validation")
 const createuser = async function (req, res) {
     try {
 
@@ -15,14 +15,14 @@ const createuser = async function (req, res) {
 //-----------------------------------------NAME VALIDATIONS---------------------------------------------------------
 
         if (!name) return res.status(400).send({ status: false, message: "name is mendatory" })
-        if (!isvalid(name)) return res.status(400).send({ status: false, message: "please write name in correct way" })
+        if (!isValid(name)) return res.status(400).send({ status: false, message: "please write name in correct way" })
         if (!regname(name)) return res.status(400).send({ status: false, message: "pls write correct name only one space allowed in name" })
         data.name = name.trim()
 
 //-----------------------------------------PHONE VALIDATIONS--------------------------------------------------------
 
         if (!phone) return res.status(400).send({ status: false, message: "phone no is mendatory" })
-        if (!isvalid(phone)) return res.status(400).send({ status: false, message: "please write phone no. in correct way give in string" })
+        if (!isValid(phone)) return res.status(400).send({ status: false, message: "please write phone no. in correct way give in string" })
         if (!phoneregex(phone)) return res.status(400).send({ status: false, message: "allow 10 digit start with[6-9]" })
         let uphone = await usermodel.findOne({ phone: phone })
         if (uphone) return res.status(400).send({ status: false, message: `this ${phone} no. already present` })
@@ -30,22 +30,22 @@ const createuser = async function (req, res) {
 //-----------------------------------------EMAIL VALIDATIONS--------------------------------------------------------
 
         if (!email) return res.status(400).send({ status: false, message: "email is mendatory" })
-        if (!isvalid(email)) return res.status(400).send({ status: false, message: "please write email in correct way give in string" })
+        if (!isValid(email)) return res.status(400).send({ status: false, message: "please write email in correct way give in string" })
         if (!emailregex(email)) return res.status(400).send({ status: false, message: "email format is wrong" })
         let uemail = await usermodel.findOne({ email: email })
         if (uemail) return res.status(400).send({ status: false, message: `this emailid ${email} is already present` })
 //-----------------------------------------PASSWORD VALIDATIONS-----------------------------------------------------
 
         if (!password) return res.status(400).send({ status: false, message: "password is mendatory" })
-        if (!isvalid(password)) return res.status(400).send({ status: false, message: "please write password in correct way give in string" })
+        if (!isValid(password)) return res.status(400).send({ status: false, message: "please write password in correct way give in string" })
         if (!passregex(password)) return res.status(400).send({ status: false, message: "password must have one capital,one small,one numeric and one special character #$^+=!*()@%& and length 8-15" })
 
 //-----------------------------------------ADDRESS VALIDATIONS------------------------------------------------------
 
         if (address) {
-            if (address.street && !isvalid(address.street)) return res.status(400).send({ status: false, message: "enter street in string type" })
-            if (address.city && !isvalid(address.city)) return res.status(400).send({ status: false, message: "enter city in string type" })
-            if (address.pincode && !isvalid(address.pincode)) return res.status(400).send({ status: false, message: "enter pincode in string type" })
+            if (address.street && !isValid(address.street)) return res.status(400).send({ status: false, message: "enter street in string type" })
+            if (address.city && !isValid(address.city)) return res.status(400).send({ status: false, message: "enter city in string type" })
+            if (address.pincode && !isValid(address.pincode)) return res.status(400).send({ status: false, message: "enter pincode in string type" })
         }
 //-----------------------------------------USER CREATION---------------------------------------------------------
 
@@ -77,7 +77,7 @@ const login = async function (req, res) {
 
     const {email , password}=details;
 
-    if(!isvalid(email)){
+    if(!isValid(email)){
         return res.status(400).send({ status: false, message: "email is required..!!" })
     }
     if(!emailregex(email)){
@@ -88,7 +88,7 @@ const login = async function (req, res) {
         return res.status(404).send({ status: false, message: "user not found...!!!" })
     }
 
-    if(!isvalid(password)){
+    if(!isValid(password)){
         return res.status(400).send({ status: false, message: "password is required..!!" })
     }
     if(!(password.length >= 8) && password.length <= 15){
