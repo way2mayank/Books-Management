@@ -43,4 +43,9 @@ const isbnregex = function(value){
     return true
 }
 
-module.exports = {isValid,regname,phoneregex,emailregex,passregex,enumvalid,isbnregex}
+const regtitle = function(value){
+    let regex = /^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/ 
+    if(!regex.test(value.trim())) return false
+    return true
+}
+module.exports = {isValid,regname,phoneregex,emailregex,passregex,enumvalid,isbnregex,regtitle}

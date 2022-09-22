@@ -25,12 +25,12 @@ const bookschema = new mongoose.Schema({
         type : String,
         required : true
     },
-    subcategory: [
+    subcategory: 
         {
             type : String,
             required : true
-        }
-    ],
+        },
+    
     reviews: {
         type : Number,
         default : 0
