@@ -6,8 +6,8 @@ const {createBook,getbooks,getbooksbyid} = require('../controller/bookController
 
 router.post('/register',createuser)
 router.post('/login',login)
-router.post('/books',createBook)
-router.get('/books',getbooks)
+router.post('/books',authentication, authorisation ,createBook)
+router.get('/books',authentication,getbooks)
 router.get('/books/:bookId',getbooksbyid)
 
 module.exports = router
