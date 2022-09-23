@@ -60,14 +60,5 @@ if(!isValid(review))return res.status(400).send({status:false,message:"please wr
     }
 }
 
-const updatereview = async function (req, res) {
-
-
-}
-
-const deletereview = async function (req, res) {
-
-
-}
 
 module.exports = { createreview, updatereview, deletereview }
