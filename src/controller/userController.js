@@ -105,7 +105,7 @@ const login = async function (req, res) {
             exp: time
         }, "secretkey")
 
-        return res.status(200).send({ status: true, message: 'success', data: { token } })
+        return res.status(200).send({ status: true, message: 'success', data:  token  })
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
