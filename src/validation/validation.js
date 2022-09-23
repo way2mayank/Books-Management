@@ -48,4 +48,5 @@ const regtitle = function(value){
     if(!regex.test(value.trim())) return false
     return true
 }
+
 module.exports = {isValid,regname,phoneregex,emailregex,passregex,enumvalid,isbnregex,regtitle}

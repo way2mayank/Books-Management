@@ -13,7 +13,7 @@ mongoose.connect("mongodb+srv://jay420:gRLzeLdOa6ENyasF@cluster0.dnkg3q6.mongodb
 app.use('/',route)
 
 app.use(function(req,res){
-    return res.status(400).send({status:false,message:"path not found"})
+    return res.status(400).send({status:false,message:"path not found or wrong url"})
 })
 
 app.listen(process.env.PORT || 3000 , function(){
