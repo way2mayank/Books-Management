@@ -14,7 +14,7 @@ const enumvalid = function(value){
     return false
 }
 
-const regname = function(value){
+const isValidName = function(value){
     let regex = /^[a-zA-Z]+([_ -]?[a-zA-Z])*$/ 
     if(!regex.test(value.trim())) return false
     return true
@@ -38,16 +38,16 @@ const passregex = function(value){
     return true
 }
 
-const isbnregex = function(value){
+const isIsbnValid = function(value){
     let regex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
     if(!regex.test(value)) return false
     return true
 }
 
-const regtitle = function(value){
+const isValidTitle = function(value){
     let regex = /^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/ 
     if(!regex.test(value.trim())) return false
     return true
 }
 
-module.exports = {isValid,regname,phoneregex,emailregex,passregex,enumvalid,isbnregex,regtitle}
+module.exports = {isValid,isValidName,phoneregex,emailregex,passregex,enumvalid,isIsbnValid,isValidTitle}
