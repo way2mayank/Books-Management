@@ -127,11 +127,6 @@ const getbooks = async function(req, res) {
 		let {userId,category,subcategory} = data
 		data.isDeleted = false
 
-        let bookdata = await bookModel.find(data).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
-        if (bookdata.length == 0) return res.status(404).send({ status: false, message: "data not found" })
-        bookdata = bookdata.sort(function (a, b) { return a.title.localeCompare(b.title) })
-        return res.status(200).send({ status: true, message: "Books List", data: bookdata })
-
 		let bookdata = await bookModel.find(data).select({_id: 1,title: 1,excerpt: 1,userId: 1,category: 1,releasedAt: 1,reviews: 1})
 		if (bookdata.length == 0) return res.status(404).send({
 			status: false,
