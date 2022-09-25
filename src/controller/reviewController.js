@@ -49,7 +49,7 @@ if(!isValid(review))return res.status(400).send({status:false,message:"please wr
         let reviewdata = await reviewModel.find({bookId})
         let updatebook = await bookModel.findOneAndUpdate(
             {_id:id},
-            {$inc:{reviews:1},$set:{reviewedAt:Date.now()}},
+            {$inc:{reviews:1}},
             {new:true}
         )
         updatebook._doc['reviewsdata'] = reviewdata
@@ -64,35 +64,37 @@ if(!isValid(review))return res.status(400).send({status:false,message:"please wr
 const updatereview  = async function(req,res){
     try{
         const bookId = req.params.bookId
-        if (bookId) {
             if (!mongoose.Types.ObjectId.isValid(bookId)) return res.status(400).send({ status: false, message: "enter correct bookid" })
-        }
+        
         const rId = req.params.reviewId
-        if (rId) {
             if (!mongoose.Types.ObjectId.isValid(rId)) return res.status(400).send({ status: false, message: "enter correct reviewid" })
-        }
+
+            const book = await bookModel.findOne({_id:bookId , isDeleted:false})
+            if (!book) return res.status(404).send({ status: false, message: "book not found" })          
+            
+          const reviewId = await reviewModel.findOne({_id:rId ,bookId : bookId, isDeleted:false})
+          if (!reviewId) return res.status(404).send({ status: false, message: "review not found" })
+        
         const data = req.body
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "please provide data to update reveiw" })
     
         const {reviewedBy,rating,review} =data
     
-        const book = await bookModel.findOne({_id:bookId , isDeleted:false})
-        if (!book) return res.status(404).send({ status: false, message: "book not found" })
-    
-        const reviewId = await reviewModel.findOne({_id:rId ,bookId : bookId, isDeleted:false})
-        if (!reviewId) return res.status(404).send({ status: false, message: "review not found" })
-    
-        if (!(typeof reviewedBy === "undefined")) {
+        if (reviewedBy) {
             if (!isValid(reviewedBy)) return res.status(400).send({ status: false, message: "please write name in correct way" })
             if (!regname(reviewedBy)) return res.status(400).send({ status: false, message: "pls write correct name only one space allowed in title" })
         }
-        if (!(typeof rating === "undefined")) {
-            if (!isValid(rating)) return res.status(400).send({ status: false, message: "please write rating in correct way" })
-            if(rating < 1 || rating >5){
-                return res.status(400).send({ status: false, message: "rating should be between 1 to 5" })
-            } 
-        }
-        if (!(typeof review === "undefined")) {
+if(rating){
+if(typeof rating !== "number") return res.status(400).send({status:false,message:"rating must be a number"})
+if(!/^[1-5]{1}$/.test(rating))return res.status(400).send({status:false,message:"rating must be a integer between 1 to 5"})
+}
+        // if ((typeof rating != "Number")) {
+        //     if (!isValid(rating)) return res.status(400).send({ status: false, message: "please write rating in correct way" })
+        //     if(rating < 1 || rating >5){
+        //         return res.status(400).send({ status: false, message: "rating should be between 1 to 5" })
+        //     } 
+        // }
+        if (review){
             if (!isValid(review)) return res.status(400).send({ status: false, message: "please write review in correct way" })
         }
     

@@ -23,7 +23,7 @@ const createuser = async function (req, res) {
 
         if (!phone) return res.status(400).send({ status: false, message: "phone no is mendatory" })
         if (!isValid(phone)) return res.status(400).send({ status: false, message: "please write phone no. in correct way give in string" })
-        if (!phoneregex(phone)) return res.status(400).send({ status: false, message: "allow 10 digit start with[6-9]" })
+        if (!phoneregex(phone)) return res.status(400).send({ status: false, message: "allow only 10 digit start with[6-9]" })
         let uphone = await usermodel.findOne({ phone: phone })
         if (uphone) return res.status(400).send({ status: false, message: `this ${phone} no. already present` })
 
@@ -43,6 +43,7 @@ const createuser = async function (req, res) {
 //-----------------------------------------ADDRESS VALIDATIONS------------------------------------------------------
 
         if (address) {
+            if(typeof address !== "object")return res.status(400).send({ status: false, message: "please enter address in object type" })
             if (address.street && !isValid(address.street)) return res.status(400).send({ status: false, message: "enter street in string type" })
             if (address.city && !isValid(address.city)) return res.status(400).send({ status: false, message: "enter city in string type" })
             if (address.pincode && !isValid(address.pincode)) return res.status(400).send({ status: false, message: "enter pincode in string type" })
@@ -50,7 +51,7 @@ const createuser = async function (req, res) {
 //-----------------------------------------USER CREATION---------------------------------------------------------
 
         const user = await usermodel.create(data)
-        return res.status(201).send({ status: true, message: 'success', data: { user } })
+        return res.status(201).send({ status: true, message: 'success', data:user })
 
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
