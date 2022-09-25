@@ -40,7 +40,7 @@ const authorisation = async function (req, res, next) {
     }
 }
 
-const authorisation2 = async function (req, res) {
+const authorisation2 = async function (req, res,next) {
     try {
         let userId = req.body.userId
         if (!userId) return res.status(400).send({ status: false, message: "userId is mendatory" })

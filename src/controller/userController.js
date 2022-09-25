@@ -99,7 +99,7 @@ const login = async function (req, res) {
         return res.status(400).send({ status: false, message: "this password is not matching with your email id" })
     }
 
-        let time = (Date.now() / 1000) + 60*5 
+        let time = (Date.now() / 1000) + 60*60
 
         let token = jwt.sign({
             userId: user._id.toString(),
