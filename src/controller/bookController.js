@@ -3,8 +3,7 @@ const userModel = require('../model/userModel')
 const moment = require('moment')
 const mongoose = require("mongoose")
 const { isValid,
-    isIsbnValid,
-    isValidTitle
+    isIsbnValid
 } = require('../validation/validation')
 const reviewModel = require('../model/reviewModel')
 
@@ -124,25 +123,43 @@ const getbooks = async function (req, res) {
     try {
 
         let data = req.query
-        let { userId, category, subcategory } = data
-        data.isDeleted = false
+		let {userId,category,subcategory} = data
+		data.isDeleted = false
 
-        let bookdata = await bookModel.find(data).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
-        if (bookdata.length == 0) return res.status(404).send({
-            status: false,
-            message: "data not found"
-        })
+		if (category === "") return res.status(400).send({
+			status: false,
+			message: "please enter category value"
+		})
+		if (subcategory === "") return res.status(400).send({
+			status: false,
+			message: "please enter subcategory value"
+		})
+		if (userId === "") return res.status(400).send({
+			status: false,
+			message: "please enter userID value"
+		})
+		if (userId) {
+			if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(400).send({
+				status: false,
+				message: "invalid userId"
+			})
+		}
 
-        bookdata = bookdata.sort(function (a, b) {
-            return a.title.localeCompare(b.title)
-        })
+		let bookdata = await bookModel.find(data).select({_id: 1,title: 1,excerpt: 1,userId: 1,category: 1,releasedAt: 1,reviews: 1})
+		if (bookdata.length == 0) return res.status(404).send({
+			status: false,
+			message: "data not found"
+		})
 
-        return res.status(200).send({
-            status: true,
-            message: "success",
-            data: bookdata
-        })
+		bookdata = bookdata.sort(function(a, b) {
+			return a.title.localeCompare(b.title)
+		})
 
+		return res.status(200).send({
+			status: true,
+			message: "success",
+			data: bookdata
+		})
     } catch (err) {
         return res.status(500).send({
             status: false,
@@ -164,16 +181,13 @@ const getbooksbyid = async function (req, res) {
             _id: bookId,
             isDeleted: false,
         })
-
-        if (!book) return res.status(404).send({
-            status: false,
-            message: "No Books Match With This BookId"
-        })
+        console.log(book);
 
         if (!book) return res.status(404).send({ status: false, message: "No Books Match With This BookId" })
-        if (book.reviews === 0) book._doc["reviewsData"] = []
 
+       let reviews = await reviewModel.find({bookId:bookId,isDeleted:false})
         book._doc['reviewsData'] = reviews
+
         return res.status(200).send({
             status: true,
             data: book
@@ -209,7 +223,7 @@ const updatebook = async function (req, res) {
                 if (Object.keys(data)[i] === arr[j]) count++
             }
         }
-        if (count !== Object.keys(data).length) return res.status(400).send({ status: false, message: "please write correct keys to update" })
+        if (count !== Object.keys(data).length) return res.status(400).send({ status: false, message: "you can update only :- title, excerpt, releasedAt, ISBN" })
 
 
         if (typeof title !== "undefined") {
@@ -217,10 +231,7 @@ const updatebook = async function (req, res) {
                 status: false,
                 message: "please write title in correct way"
             })
-            if (!isValidTitle(title)) return res.status(400).send({
-                status: false,
-                message: "pls write correct title only one space allowed in title"
-            })
+           
             let isTitlePresent = await bookModel.findOne({
                 title
             })

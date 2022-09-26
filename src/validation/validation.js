@@ -44,10 +44,6 @@ const isIsbnValid = function(value){
     return true
 }
 
-const isValidTitle = function(value){
-    let regex = /^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/ 
-    if(!regex.test(value.trim())) return false
-    return true
-}
 
-module.exports = {isValid,isValidName,phoneregex,emailregex,passregex,enumvalid,isIsbnValid,isValidTitle}
+
+module.exports = {isValid,isValidName,phoneregex,emailregex,passregex,enumvalid,isIsbnValid}

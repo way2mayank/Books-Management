@@ -31,11 +31,11 @@ const createreview = async function (req, res) {
         let { bookId, reviewedBy, reviewedAt, rating, review } = data
 
         if (!bookId) { data.bookId = id }
-
-        if (id !== bookId) return res.status(400).send({
+if(bookId){
+        if (id != bookId) return res.status(400).send({
             status: false,
             message: "bookid from params and body are different"
-        })
+        })}
 
         //------------------------------------------reviewedBy validation---------------------------------------------------
 
@@ -152,6 +152,15 @@ const updatereview = async function (req, res) {
         })
 
         const { reviewedBy, rating, review } = data
+
+        let arr = ["reviewedBy", "rating", "review" ]
+        let count = 0
+        for (let i = 0; i < Object.keys(data).length; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                if (Object.keys(data)[i] === arr[j]) count++
+            }
+        }
+        if (count !== Object.keys(data).length) return res.status(400).send({ status: false, message: "you can update only :-  reviewedBy, rating, review " })
 
         if (reviewedBy) {
             if (!isValid(reviewedBy)) return res.status(400).send({
