@@ -109,7 +109,7 @@ const createuser = async function (req, res) {
                 status: false,
                 message: "please enter address in object type"
             })
-            if(address.length!==undefined)return res.status(400).send({status:false,message:"please write address in only object type"})
+            if (address.length !== undefined) return res.status(400).send({ status: false, message: "please write address in only object type" })
             if (address.street && !isValid(address.street)) return res.status(400).send({
                 status: false,
                 message: "enter street in string type"

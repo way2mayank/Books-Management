@@ -35,7 +35,7 @@ const bookschema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    deletedAt: {
+    deletedAt: { 
         type: Date,
         // default : null
     },
@@ -46,6 +46,10 @@ const bookschema = new mongoose.Schema({
     releasedAt: {
         type: Date,
         required: true
+    },
+    bookCover:{
+        type:String,
+        required:true
     }
 
 }, { timestamps: true })

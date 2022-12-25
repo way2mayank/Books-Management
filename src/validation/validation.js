@@ -14,6 +14,7 @@ const enumvalid = function(value){
     return false
 }
 
+
 const isValidName = function(value){
     let regex = /^[a-zA-Z]+([_ -]?[a-zA-Z])*$/ 
     if(!regex.test(value.trim())) return false

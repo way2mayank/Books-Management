@@ -1,5 +1,7 @@
-const mongoose = require("mongoose")
+const { default: mongoose } = require("mongoose")
 const ObjectId = mongoose.Schema.Types.ObjectId
+
+
 const reviewschema = new mongoose.Schema({
     bookId: {
         type: ObjectId,
@@ -20,7 +22,9 @@ const reviewschema = new mongoose.Schema({
         required: true,
         // min:1,max:5
     },
-    review: { type: String },
+    review: {
+        type: String
+    },
     isDeleted: {
         type: Boolean,
         default: false

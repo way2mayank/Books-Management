@@ -31,11 +31,12 @@ const createreview = async function (req, res) {
         let { bookId, reviewedBy, reviewedAt, rating, review } = data
 
         if (!bookId) { data.bookId = id }
-if(bookId){
-        if (id != bookId) return res.status(400).send({
-            status: false,
-            message: "bookid from params and body are different"
-        })}
+        if (bookId) {
+            if (id != bookId) return res.status(400).send({
+                status: false,
+                message: "bookid from params and body are different"
+            })
+        }
 
         //------------------------------------------reviewedBy validation---------------------------------------------------
 
@@ -50,7 +51,7 @@ if(bookId){
             })
         }
 
-        //------------------------------------------REVIEWDAT VALIDATION----------------------------------------------------
+        //------------------------------------------REVIEWEDAT VALIDATION----------------------------------------------------
 
         if (!reviewedAt) return res.status(400).send({
             status: false,
@@ -59,7 +60,7 @@ if(bookId){
         let isValidDate = moment(reviewedAt, 'YYYY-MM-DD', true).isValid()
         if (!isValidDate) return res.status(400).send({
             status: false,
-            message: "Date shoulb be on this format - YYYY-MM-DD"
+            message: "Date should be on this format - YYYY-MM-DD"
         })
 
         // ---------------------------------------------RATING VALIDATION---------------------------------------------------
@@ -85,7 +86,7 @@ if(bookId){
         })
 
         let createreview = await reviewModel.create(data)
-        let reviewdata = await reviewModel.find({ bookId })
+        let reviewdata = await reviewModel.find({ bookId: bookId })
 
         let updatebook = await bookModel.findOneAndUpdate({
             _id: id
@@ -111,7 +112,6 @@ if(bookId){
     }
 }
 
-
 const updatereview = async function (req, res) {
     try {
         const bookId = req.params.bookId
@@ -135,15 +135,17 @@ const updatereview = async function (req, res) {
             message: "book not found ..."
         })
 
+
         const reviewId = await reviewModel.findOne({
             _id: rId,
             bookId: bookId,
-            isDeleted: false
+
         })
         if (!reviewId) return res.status(404).send({
             status: false,
             message: "review not found ..."
         })
+
 
         const data = req.body
         if (Object.keys(data).length == 0) return res.status(400).send({
@@ -153,7 +155,7 @@ const updatereview = async function (req, res) {
 
         const { reviewedBy, rating, review } = data
 
-        let arr = ["reviewedBy", "rating", "review" ]
+        let arr = ["reviewedBy", "rating", "review"]
         let count = 0
         for (let i = 0; i < Object.keys(data).length; i++) {
             for (let j = 0; j < arr.length; j++) {
@@ -198,7 +200,7 @@ const updatereview = async function (req, res) {
         }, {
             new: true
         })
-        const reviews = await reviewModel.find({ bookId })
+        const reviews = await reviewModel.find({ bookId: bookId })
 
         book._doc['reviewsData'] = reviews
 
@@ -214,8 +216,6 @@ const updatereview = async function (req, res) {
         })
     }
 }
-
-
 
 const deletereview = async function (req, res) {
     try {

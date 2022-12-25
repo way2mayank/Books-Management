@@ -2,10 +2,9 @@ const bookModel = require('../model/bookModel')
 const userModel = require('../model/userModel')
 const moment = require('moment')
 const mongoose = require("mongoose")
-const { isValid,
-    isIsbnValid
-} = require('../validation/validation')
+const { isValid, isIsbnValid } = require('../validation/validation')
 const reviewModel = require('../model/reviewModel')
+const {uploadFile}= require('../validation/prectice')
 
 const createBook = async function (req, res) {
     try {
@@ -14,7 +13,7 @@ const createBook = async function (req, res) {
             status: false,
             message: "please provide data to create book"
         })
-        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = data
+        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt} = data
 
         if (!title) return res.status(400).send({
             status: false,
@@ -22,7 +21,7 @@ const createBook = async function (req, res) {
         })
         if (!isValid(title)) return res.status(400).send({
             status: false,
-            message: "please write excerpt in correct way"
+            message: "please write title in correct way"
         })
         let isTitlePresent = await bookModel.findOne({ title })
         if (isTitlePresent) return res.status(400).send({
@@ -103,63 +102,77 @@ const createBook = async function (req, res) {
             message: "Date shoulb be on this format - YYYY-MM-DD"
         })
 
+
+
+        let file = req.files
+
+        if(file && file.length>0){
+            //upload to s3 and get the uploaded link
+            // res.send the link back to frontend/postman
+            let uploadedFileURL= await uploadFile(file[0])
+
+            data['bookCover'] = uploadedFileURL
+            console.log(uploadedFileURL)
+        }
+        else{
+            res.status(400).send({status : false, message: "No file found" })
+        }
+
         const saveData = await bookModel.create(data)
         return res.status(201).send({
             status: true,
             message: "success",
             data: saveData
-        })
+        }) 
     } catch (err) {
-        return res.status(500).send({
+        return res.status(500).send({ 
             status: false,
             message: err.message
         })
     }
 }
 
-
-
 const getbooks = async function (req, res) {
     try {
 
         let data = req.query
-		let {userId,category,subcategory} = data
-		data.isDeleted = false
+        let { userId, category, subcategory } = data
+        data.isDeleted = false
 
-		if (category === "") return res.status(400).send({
-			status: false,
-			message: "please enter category value"
-		})
-		if (subcategory === "") return res.status(400).send({
-			status: false,
-			message: "please enter subcategory value"
-		})
-		if (userId === "") return res.status(400).send({
-			status: false,
-			message: "please enter userID value"
-		})
-		if (userId) {
-			if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(400).send({
-				status: false,
-				message: "invalid userId"
-			})
-		}
+        if (category === "") return res.status(400).send({
+            status: false,
+            message: "please enter category value"
+        })
+        if (subcategory === "") return res.status(400).send({
+            status: false,
+            message: "please enter subcategory value"
+        })
+        if (userId === "") return res.status(400).send({
+            status: false,
+            message: "please enter userID value"
+        })
+        if (userId) {
+            if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(400).send({
+                status: false,
+                message: "invalid userId"
+            })
+        }
 
-		let bookdata = await bookModel.find(data).select({_id: 1,title: 1,excerpt: 1,userId: 1,category: 1,releasedAt: 1,reviews: 1})
-		if (bookdata.length == 0) return res.status(404).send({
-			status: false,
-			message: "data not found"
-		})
+        let bookdata = await bookModel.find(data).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
+        if (bookdata.length == 0) return res.status(404).send({
+            status: false,
+            message: "data not found"
+        })
 
-		bookdata = bookdata.sort(function(a, b) {
-			return a.title.localeCompare(b.title)
-		})
+        bookdata = bookdata.sort(function (a, b) {
+            return a.title.localeCompare(b.title)
+        })
 
-		return res.status(200).send({
-			status: true,
-			message: "success",
-			data: bookdata
-		})
+        return res.status(200).send({
+            status: true,
+            message: "success",
+            data: bookdata
+        })
     } catch (err) {
         return res.status(500).send({
             status: false,
@@ -181,11 +194,10 @@ const getbooksbyid = async function (req, res) {
             _id: bookId,
             isDeleted: false,
         })
-        console.log(book);
 
         if (!book) return res.status(404).send({ status: false, message: "No Books Match With This BookId" })
 
-       let reviews = await reviewModel.find({bookId:bookId,isDeleted:false})
+        let reviews = await reviewModel.find({ bookId: bookId, isDeleted: false })
         book._doc['reviewsData'] = reviews
 
         return res.status(200).send({
@@ -208,13 +220,6 @@ const updatebook = async function (req, res) {
         let data = req.body
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "pls provide data to update" })
         let { title, excerpt, releasedAt, ISBN } = data
-        // console.log(title);
-        // console.log(data);
-        // console.log(typeof title);
-        // console.log(excerpt);
-        // console.log(releasedAt);
-        // console.log(ISBN);
-        // console.log(Object.keys(data)[0]);
 
         let arr = ["title", "excerpt", "releasedAt", "ISBN"]
         let count = 0
@@ -231,7 +236,7 @@ const updatebook = async function (req, res) {
                 status: false,
                 message: "please write title in correct way"
             })
-           
+
             let isTitlePresent = await bookModel.findOne({
                 title
             })

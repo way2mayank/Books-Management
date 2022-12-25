@@ -2,10 +2,10 @@ const express = require('express');
 const app = express()
 const mongoose = require('mongoose')
 const route = require("./routes/route.js")
-
+const multer= require('multer')
 
 app.use(express.json())
-
+app.use(multer().any())
 mongoose.connect("mongodb+srv://jay420:gRLzeLdOa6ENyasF@cluster0.dnkg3q6.mongodb.net/group58Dtabase")
 .then(() => console.log("mongoDB is connected.."))
 .catch((err) => console.log(err))
